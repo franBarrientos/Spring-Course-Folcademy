@@ -25,6 +25,7 @@ public class SaludoController {
     @PostMapping("/hastaLuego")
     public String hastaLuego(){
         return "hasta luego!!";
+
     }
 
 
