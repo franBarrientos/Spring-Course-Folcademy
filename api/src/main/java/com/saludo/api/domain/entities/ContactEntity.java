@@ -1,0 +1,26 @@
+package com.saludo.api.domain.entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity @Table(name = "contacts")
+public class ContactEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "BIGINT UNSIGNED")
+    private Long id;
+
+    @Column(columnDefinition = "VARCHAR(50)")
+    private String name;
+
+    @Column(columnDefinition = "INT UNSIGNED")
+    private Integer phone;
+}
