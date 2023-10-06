@@ -12,8 +12,10 @@ import com.saludo.api.exceptions.exceptionKinds.NonExistentContactException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,14 +62,47 @@ public class ContactService {
 
     public ContactReadDTO deleteById(Long id) {
 
-        Optional<ContactEntity> optionalContact = this.contactRepository
-                .findById(id);
+        ContactEntity contact = this.contactRepository
+                .findById(id)
+                .orElseThrow(()-> new NonExistentContactException("The contact doesn't exist yet"));
 
-        if (optionalContact.isEmpty()) {
-            throw new NonExistentContactException("The contact doesn't exist yet");
-        };
+        this.contactRepository.delete(contact);
 
         return this.contactMapper
-                .EntityToReadDTO(optionalContact.get());
+                .EntityToReadDTO(contact);
+    }
+
+    public List<ContactReadDTO> getAll() {
+        return this.contactRepository.findAll()
+                .stream()
+                .map(this.contactMapper::EntityToReadDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public ContactReadDTO updateById(Long id, ContactAddDTO contactAddDTO) {
+        ContactEntity contactEntity = this.contactRepository.findById(id)
+                .orElseThrow(()->new NonExistentContactException("The contact doesn't exist yet"));
+
+        if(contactAddDTO.getName() != null && !contactAddDTO.getName().isBlank()){
+            contactEntity.setName(contactAddDTO.getName());
+        }
+        if(contactAddDTO.getPhone() != null){
+            contactEntity.setPhone(contactAddDTO.getPhone());
+        }
+        if (contactAddDTO.getAddress()!= null
+                && contactAddDTO.getAddress().getStreet() != null
+                && !contactAddDTO.getAddress().getStreet().isBlank()){
+            contactEntity.getAddress().setStreet(contactAddDTO.getAddress().getStreet());
+        }
+        if (contactAddDTO.getAddress()!= null
+                && contactAddDTO.getAddress().getNumber() != null
+                && !contactAddDTO.getAddress().getNumber().isBlank()){
+            contactEntity.getAddress().setNumber(contactAddDTO.getAddress().getNumber());
+        }
+
+        return this.contactMapper.EntityToReadDTO(this.contactRepository.save(contactEntity));
+
+
     }
 }
