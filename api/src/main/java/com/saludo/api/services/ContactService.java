@@ -2,8 +2,10 @@ package com.saludo.api.services;
 
 import com.saludo.api.domain.dtos.ContactAddDTO;
 import com.saludo.api.domain.dtos.ContactReadDTO;
+import com.saludo.api.domain.entities.AddressEntity;
 import com.saludo.api.domain.entities.ContactEntity;
 import com.saludo.api.domain.mappers.ContactMapper;
+import com.saludo.api.domain.repositories.AddressRepository;
 import com.saludo.api.domain.repositories.ContactRepository;
 import com.saludo.api.exceptions.exceptionKinds.ContactAlreadyExistException;
 import com.saludo.api.exceptions.exceptionKinds.NonExistentContactException;
@@ -19,6 +21,7 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
     private final ContactMapper contactMapper;
+    private final AddressRepository addressRepository;
 
     public ContactReadDTO add(ContactAddDTO contactAddDTO) {
 
@@ -26,13 +29,20 @@ public class ContactService {
                 this.contactRepository.existsByPhone(contactAddDTO.getPhone())) {
             throw new ContactAlreadyExistException("The name or phone is already exists");
         }
-        ;
+        AddressEntity address = AddressEntity.builder()
+                .street(contactAddDTO.getAddress().getStreet())
+                .number(contactAddDTO.getAddress().getNumber())
+                .build();
+
+        ContactEntity contact = this.contactMapper
+                .addDTOToEntity(contactAddDTO);
+
+        contact.setAddress(this.addressRepository.save(address));
 
         return this.contactMapper
                 .EntityToReadDTO(
                         this.contactRepository
-                                .save(this.contactMapper
-                                        .addDTOToEntity(contactAddDTO)));
+                                .save(contact));
 
     }
 
