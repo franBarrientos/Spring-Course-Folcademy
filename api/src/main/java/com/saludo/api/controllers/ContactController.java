@@ -1,7 +1,6 @@
 package com.saludo.api.controllers;
 
 import com.saludo.api.domain.dtos.ContactAddDTO;
-import com.saludo.api.domain.dtos.ContactReadDTO;
 import com.saludo.api.domain.dtos.ResponseWithMessage;
 import com.saludo.api.services.ContactService;
 import jakarta.validation.Valid;
@@ -33,6 +32,14 @@ public class ContactController {
                         .message("found succesfully!")
                         .build());
     }
+    @GetMapping()
+    public ResponseEntity<ResponseWithMessage> getAll() {
+        return ResponseEntity.ok(
+                ResponseWithMessage.builder()
+                        .resource(this.contactService.getAll())
+                        .message("search was completed succesfully!")
+                        .build());
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseWithMessage> deleteById(@PathVariable(value = "id") Long id) {
@@ -40,6 +47,15 @@ public class ContactController {
                 ResponseWithMessage.builder()
                         .resource(this.contactService.deleteById(id))
                         .message("Deleted Successfully!")
+                        .build());
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseWithMessage> updateById(@PathVariable(value = "id") Long id,
+                                                          @RequestBody ContactAddDTO contactAddDTO) {
+        return ResponseEntity.ok(
+                ResponseWithMessage.builder()
+                        .resource(this.contactService.updateById(id, contactAddDTO))
+                        .message("Updated Successfully!")
                         .build());
     }
 
