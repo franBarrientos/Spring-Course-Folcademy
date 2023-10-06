@@ -9,22 +9,20 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "contacts")
 @Builder
 @Entity
-public class ContactEntity {
+@Table(name = "address")
+public class AddressEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(50)")
-    private String name;
+    private String street;
 
-    @Column(columnDefinition = "INT UNSIGNED")
-    private Integer phone;
+    @Column(columnDefinition = "VARCHAR(10)")
+    private String number;
 
-    @ManyToOne
-    @JoinColumn(name = "addressId")
-    private AddressEntity address;
+
 }

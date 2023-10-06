@@ -16,4 +16,8 @@ public class ContactReadDTO {
     private String name;
 
     private Integer phone;
+
+    private String addressStreet;
+
+    private String addressNumber;
 }
