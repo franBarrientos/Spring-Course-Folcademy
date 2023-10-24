@@ -10,6 +10,8 @@ import com.saludo.api.domain.repositories.ContactRepository;
 import com.saludo.api.exceptions.exceptionKinds.ContactAlreadyExistException;
 import com.saludo.api.exceptions.exceptionKinds.NonExistentContactException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,11 +74,9 @@ public class ContactService {
                 .EntityToReadDTO(contact);
     }
 
-    public List<ContactReadDTO> getAll() {
-        return this.contactRepository.findAll()
-                .stream()
-                .map(this.contactMapper::EntityToReadDTO)
-                .collect(Collectors.toList());
+        public Page<ContactReadDTO> getAll(Pageable pageable, String name, Integer phone) {
+        return this.contactRepository.findAllByNameContainingOrPhone(name, phone, pageable)
+                .map(this.contactMapper::EntityToReadDTO);
     }
 
 
