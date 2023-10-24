@@ -5,6 +5,7 @@ import com.saludo.api.domain.dtos.ResponseWithMessage;
 import com.saludo.api.services.ContactService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +34,15 @@ public class ContactController {
                         .build());
     }
     @GetMapping()
-    public ResponseEntity<ResponseWithMessage> getAll() {
+    public ResponseEntity<ResponseWithMessage> getAll(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "name", required = false, defaultValue = "") String name,
+            @RequestParam(value = "phone", required = false, defaultValue = "") Integer phone
+    ) {
         return ResponseEntity.ok(
                 ResponseWithMessage.builder()
-                        .resource(this.contactService.getAll())
+                        .resource(this.contactService.getAll(PageRequest.of(page, size), name, phone))
                         .message("search was completed succesfully!")
                         .build());
     }
